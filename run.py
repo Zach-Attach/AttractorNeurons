@@ -24,15 +24,37 @@ def fitness(cns, steps=200):
       # if (states==np.NaN).any(): 
       #   return np.Inf
     measure = np.cos if k == 'cos' else np.sin
-    fitness += np.mean(np.abs(states - measure(np.linspace(0, 2*np.pi, steps))))
+    yhat = (measure(np.linspace(0, 2*np.pi, steps)) + 1)/2
+    fitness += (np.abs(states - yhat)).sum()
   if np.isnan(fitness):
     return np.Inf
   
   return fitness
     
+def plot(cns, steps=200):
+  #Assume 3 node ctrnn
+  for k, v in modes.items():
+    cns.states = np.zeros(cns.size) + 0.5
+    states = np.array([])
+    inputs = np.zeros(cns.size)
+    inputs[0] = v
+    for _ in range(steps):
+      cns.euler_step(inputs) # list of the inputs for each neuron
+      states = np.append(states, cns.outputs[-1])
+      # if (states==np.NaN).any(): 
+      #   return np.Inf
+    measure = np.cos if k == 'cos' else np.sin
+    x = np.linspace(0, 2*np.pi, steps)
+    yhat = (measure(x) + 1)/2
+    ypred = states
+    plt.plot(x, yhat, 'r')
+    plt.plot(x, ypred, 'b')
+    plt.show()
+
+
 def makeCTRNN(genome, size=3):
   index = 0
-  taus = genome[index:size] * 5
+  taus = genome[index:size] * 1
   index += size
   biases = genome[index:index+size] * 16
   index += size
@@ -51,7 +73,7 @@ def eval(genome):
 # defining the parameters for the evolutionary search
 evol_params = {
     'num_processes' : 4, # (optional) number of proccesses for multiprocessing.Pool
-    'pop_size' : 100,    # population size
+    'pop_size' : 500,    # population size
     'genotype_size': 15, # dimensionality of solution
     'fitness_function': eval, # custom function defined to evaluate fitness of a solution
     'elitist_fraction': 0.04, # fraction of population retained as is between generations
@@ -64,8 +86,6 @@ best_fit = []
 mean_fit = []
 num_gen = 0
 max_num_gens = 100
-desired_fitness = 100
-#while es.get_best_individual_fitness() < desired_fitness and num_gen < max_num_gens:
 while num_gen < max_num_gens:
     print('Gen #'+str(num_gen)+' Best Fitness = '+str(es.get_best_individual_fitness()))
     es.step_generation()
@@ -85,3 +105,5 @@ plt.xlabel('Generations')
 plt.ylabel('Fitness')
 plt.legend(['best fitness', 'avg. fitness'])
 plt.show()
+
+plot(makeCTRNN(es.get_best_individual()))
