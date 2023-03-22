@@ -5,27 +5,27 @@ import matplotlib.pyplot as plt
 
 # one network with two modes of behavior
 
-# modes = ['limit cycle', 'EP']
-modes = {'sin':0, 'cos':1}
+# modes = {'sin':0, 'cos':1}
+modes = [np.sin, np.cos]
 
 # evolve a net that is capable of switching to two modes from an external manipulation
 
 def fitness(cns, steps=200):
-  #Assume 3 node ctrnn
   fitness = 0
-  for k, v in modes.items():
-    cns.states = np.zeros(cns.size) + 0.5
+  for i, measure in enumerate(modes):
+    cns.states = np.full(cns.size, 0.5)
     states = np.array([])
+
     inputs = np.zeros(cns.size)
-    inputs[0] = v
+    inputs[0] = i
+
     for _ in range(steps):
-      cns.euler_step(inputs) # list of the inputs for each neuron
+      cns.euler_step(inputs)
       states = np.append(states, cns.outputs[-1])
-      # if (states==np.NaN).any(): 
-      #   return np.Inf
-    measure = np.cos if k == 'cos' else np.sin
+
     yhat = (measure(np.linspace(0, 2*np.pi, steps)) + 1)/2
     fitness += (np.abs(states - yhat)).sum()
+
   if np.isnan(fitness):
     return np.Inf
   
@@ -33,17 +33,17 @@ def fitness(cns, steps=200):
     
 def plot(cns, steps=200):
   #Assume 3 node ctrnn
-  for k, v in modes.items():
-    cns.states = np.zeros(cns.size) + 0.5
+  for i, measure in enumerate(modes):
+    cns.states = np.full(cns.size, 0.5)
     states = np.array([])
+
     inputs = np.zeros(cns.size)
-    inputs[0] = v
+    inputs[0] = i
+
     for _ in range(steps):
       cns.euler_step(inputs) # list of the inputs for each neuron
       states = np.append(states, cns.outputs[-1])
-      # if (states==np.NaN).any(): 
-      #   return np.Inf
-    measure = np.cos if k == 'cos' else np.sin
+
     x = np.linspace(0, 2*np.pi, steps)
     yhat = (measure(x) + 1)/2
     ypred = states
