@@ -16,15 +16,6 @@ FITNESS_FUNCS: dict = {
   'diff': lambda states, yhat: np.abs(states-yhat).sum(), # difference between the predicted and expected output
   'derivative': lambda states, yhat: np.abs(np.diff(states)-np.diff(yhat)).sum(), # difference between the derivative of the predicted and expected output
 }
-# defining the parameters for the evolutionary search
-EVOL_PARAMS: dict = {
-    'num_processes' : 4, # (optional) number of proccesses for multiprocessing.Pool
-    'pop_size' : 100,    # population size
-    'genotype_size': 15, # dimensionality of solution
-    'fitness_function': eval, # custom function defined to evaluate fitness of a solution
-    'elitist_fraction': 0.04, # fraction of population retained as is between generations
-    'mutation_variance': 0.2 # mutation noise added to offspring.
-}
 
 # Helper Functions
 
@@ -76,6 +67,16 @@ def eval(genome):
   cns = makeCTRNN(genome)
   f = fitness(cns, 'diff')[0]
   return 0 if np.isnan(f) else 100/f
+
+# defining the parameters for the evolutionary search
+EVOL_PARAMS: dict = {
+    'num_processes' : 4, # (optional) number of proccesses for multiprocessing.Pool
+    'pop_size' : 100,    # population size
+    'genotype_size': 15, # dimensionality of solution
+    'fitness_function': eval, # custom function defined to evaluate fitness of a solution
+    'elitist_fraction': 0.04, # fraction of population retained as is between generations
+    'mutation_variance': 0.2 # mutation noise added to offspring.
+}
 
 es = EvolSearch(EVOL_PARAMS)
 
