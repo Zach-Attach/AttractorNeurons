@@ -58,8 +58,8 @@ def makeCTRNN(genome, size=3):
   cns = CTRNN(size,step_size=STEP_SIZE) # create a CTRNN of {size} neurons
 
   genes = np.split(genome, [size,2*size]) # split the genome
-  np.taus, np.biases, weights = [GENE_SCALES[i]*genes[i] for i in range(3)] # scale genes values to appropriate ranges
-  np.weights = np.reshape(weights, (size,size)) # reshape the weights to be a square matrix
+  cns.taus, cns.biases, weights = [GENE_SCALES[i]*genes[i] for i in range(3)] # scale genes values to appropriate ranges
+  cns.weights = np.reshape(weights, (size,size)) # reshape the weights to be a square matrix
 
   return cns
 
