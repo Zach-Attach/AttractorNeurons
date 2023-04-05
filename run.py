@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 WAVELENGTH: float = 2*np.pi # 2pi is the wavelength of a sin/cos wave
 INIT_STATE: float = 0.5 # initial state of all neurons
 STEP_SIZE: float = 0.01 # step size for the euler integration
+NUM_GENS = 100 # number of generations to run the evolutionary search
 GENE_SCALES: list = [1,16,16] # scales each gene for the taus, biases, and weights
 MODES: list = [np.sin, np.cos] # the two modes of behavior
 
@@ -80,25 +81,28 @@ EVOL_PARAMS: dict = {
 
 es = EvolSearch(EVOL_PARAMS)
 
-best_fit = []
-mean_fit = []
-num_gen = 0
-max_num_gens = 100
-while num_gen < max_num_gens:
-    print('Gen #'+str(num_gen)+' Best Fitness = '+str(es.get_best_individual_fitness()))
+bestList = [] # list of best fitnesses
+meanList = [] # list of mean fitnesses
+
+for g in range(NUM_GENS):
     es.step_generation()
-    best_fit.append(es.get_best_individual_fitness())
-    mean_fit.append(es.get_mean_fitness())
-    num_gen += 1
+
+    bestFit = es.get_best_individual_fitness()
+    meanFit = es.get_mean_fitness()
+
+    bestList.append(bestFit)
+    meanList.append(meanFit)
+
+    print(f'Gen #${g} Best Fitness = ${bestFit}')
 
 # print results
-print('Max fitness of population = ',es.get_best_individual_fitness())
-print('Best individual in population = ',es.get_best_individual())
+print('Max fitness of population = ',es.get_best_individual_fitness(),
+      '\nBest individual in population = ',es.get_best_individual())
 
 # plot results
 plt.figure()
-plt.plot(best_fit)
-plt.plot(mean_fit)
+plt.plot(bestList)
+plt.plot(meanList)
 plt.xlabel('Generations')
 plt.ylabel('Fitness')
 plt.legend(['best fitness', 'avg. fitness'])
