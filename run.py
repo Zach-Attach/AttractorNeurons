@@ -11,10 +11,10 @@ import matplotlib.pyplot as plt
 WAVELENGTH: float = 4*jnp.pi # 2pi is the wavelength of a sin/cos wave
 INIT_STATE: float = 0.5 # initial state of all neurons
 STEP_SIZE: float = 0.01 # step size for the euler integration
-NUM_GENS: int = 10 # number of generations to run the evolutionary search
+NUM_GENS: int = 100 # number of generations to run the evolutionary search
 NUM_TIME_UNITS: float = 40. # number of time units to run the CTRNN for
 NUM_STEPS: int = int(NUM_TIME_UNITS/STEP_SIZE) # number of steps to run the CTRNN for
-POP_SIZE: int = 10 # population size
+POP_SIZE: int = 100 # population size
 NUM_NODES = 4 # number of neurons in the CTRNN
 GENE_SCALES: list = [1,32,32] # scales each gene for the taus, biases, and weights
 CHOSEN_FUNC: str = 'derivative' # the fitness function to use
